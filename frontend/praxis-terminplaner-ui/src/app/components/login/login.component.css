@@ -1,0 +1,14 @@
+:host {
+  display: block;
+}
+
+.content {
+  margin-top: auto;
+  margin-bottom: auto;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}

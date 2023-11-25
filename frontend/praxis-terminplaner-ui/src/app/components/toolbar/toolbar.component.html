@@ -1,0 +1,8 @@
+<mat-toolbar>
+
+    <button *ngFor="let button of ToolbarService.GetToolbarButtons()" 
+        mat-icon-button 
+        fxLayoutGap="10px">
+        <mat-icon>{{button.Icon}}</mat-icon>
+    </button>
+</mat-toolbar>

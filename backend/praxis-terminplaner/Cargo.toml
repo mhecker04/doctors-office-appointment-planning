@@ -1,0 +1,13 @@
+[workspace]
+
+members = [
+	"main",
+	"models",
+	"database",
+	"datalayer",
+	"tools",
+	"authentication",
+	"entities",
+	"business"
+]
+

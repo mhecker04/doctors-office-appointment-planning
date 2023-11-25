@@ -1,0 +1,24 @@
+<mat-grid-list cols="1" rowHeight="100px">
+  <mat-grid-tile>
+    <mat-form-field>
+      <mat-label>Mögliche Wochentage</mat-label>
+      <mat-select [formControl]="Weekdays" multiple>
+        <mat-option
+          *ngFor="let weekday of AvailableWeekdays"
+          [value]="weekday"
+          >{{ weekday }}</mat-option
+        >
+      </mat-select>
+    </mat-form-field>
+  </mat-grid-tile>
+  <mat-grid-tile>
+    <mat-form-field>
+      <mat-label>Von</mat-label>
+      <input matInput type="time" [(ngModel)]="From" />
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Bis</mat-label>
+      <input matInput type="time" [(ngModel)]="To" />
+    </mat-form-field>
+  </mat-grid-tile>
+</mat-grid-list>
