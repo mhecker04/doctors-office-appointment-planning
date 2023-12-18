@@ -1,6 +1,5 @@
 #[macro_use] extern crate rocket;
 
-use rocket::Data;
 use rocket::Request;
 use rocket::Response;
 use rocket::fairing::Fairing;
@@ -8,14 +7,15 @@ use rocket::fairing::Info;
 use rocket::fairing::Kind;
 use rocket::http::Header;
 use rocket::launch;
+use routes::appointment_type;
 use routes::auth;
 
 mod request_guards;
 mod response_models;
 mod routes;
 
-
 use routes::user;
+use routes::room;
 
 // Fairing to set the Access-Control-Allow-Origin header
 struct Cors;
@@ -44,10 +44,13 @@ fn options() {
 
 #[launch]
 fn rocket() -> _ {
+
     rocket::build()
         .attach(Cors)
         .mount("/auth", routes![auth::login])
         .mount("/user", routes![user::post_user])
+        .mount("/appointmentType", routes![appointment_type::insert_appointment_type])
+        .mount("/room", routes![room::insert_room])
         .mount("/", routes![options])
-    
+
 }

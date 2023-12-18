@@ -21,7 +21,7 @@ export class LoginComponent {
 
   login() {
 
-    ApiService.Login(this.username, this.password)
+    ApiService.login(this.username, this.password)
       .then(success => {
         
         if (!success) {

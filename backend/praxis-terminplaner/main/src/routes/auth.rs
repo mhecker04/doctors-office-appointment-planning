@@ -21,8 +21,8 @@ pub struct AccessToken {
 }
 
 #[post("/login", data = "<login_parameters>")]
-pub fn login(login_parameters: Json<LoginParameters>) -> Custom<Result<Json<AccessToken>, &'static str>> {
-    let token_result = authorize(&login_parameters.username, &login_parameters.password);
+pub async fn login(login_parameters: Json<LoginParameters>) -> Custom<Result<Json<AccessToken>, &'static str>> {
+    let token_result = authorize(&login_parameters.username, &login_parameters.password).await;
 
     match token_result {
         Ok(token) => {

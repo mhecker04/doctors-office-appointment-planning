@@ -1,12 +1,28 @@
+use async_trait::async_trait;
+use datalayer::base::{Repository, RepositoryError};
 
-pub trait Business<TEntity, TPrimaryKey> {
+#[async_trait]
+pub trait Business<TRepository, TModel, TPrimaryKey>
+where
+    TRepository: Repository<TModel, TPrimaryKey>,
+    TModel: Send + Sync,
+    TPrimaryKey: Send + Sync
+{
+    fn get_repository(&self) -> &TRepository;
 
-    fn insert(&self, entity: &TEntity) -> Result<usize, diesel::result::Error>;
+    async fn insert(&self, entity: &mut TModel) -> Result<TPrimaryKey, RepositoryError> {
+        self.get_repository().create(entity).await
+    }
 
-    fn update(&self,entity: &TEntity)-> Result<usize, diesel::result::Error>;
+    async fn update(&self, entity: &TModel) -> Result<(), RepositoryError> {
+        self.get_repository().update(entity).await
+    }
 
-    fn delete(&self, id: &TPrimaryKey)-> Result<usize, diesel::result::Error>;
+    async fn delete(&self, id: &TPrimaryKey) -> Result<(), RepositoryError> {
+        self.get_repository().delete(id).await
+    }
 
-    fn get(&self, id: &TPrimaryKey) -> Result<TEntity, diesel::result::Error>;   
-
+    async fn get_by_id(&self, id: &TPrimaryKey) -> Result<TModel, RepositoryError> {
+        self.get_repository().get_by_id(id).await
+    }
 }

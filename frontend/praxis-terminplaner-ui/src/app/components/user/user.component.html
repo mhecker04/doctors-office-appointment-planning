@@ -1,9 +1,9 @@
 <mat-form-field>
   <mat-label>Benutzername</mat-label>
-  <input matInput [(ngModel)]="Username" />
+  <input matInput [(ngModel)]="model.username" />
 </mat-form-field>
 <mat-form-field>
   <mat-label>Passwort</mat-label>
-  <input matInput type="password" [(ngModel)]="Password" />
+  <input matInput type="password" [(ngModel)]="model.password" />
 </mat-form-field>
-<button matButton (click)="Save()">Speichern</button>
+<button matButton (click)="create()">Speichern</button>

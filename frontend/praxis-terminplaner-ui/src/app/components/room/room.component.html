@@ -1,0 +1,9 @@
+<mat-form-field>
+  <mat-label>Name</mat-label>
+  <input matInput [(ngModel)]="model.room_name" />
+</mat-form-field>
+<mat-form-field>
+  <mat-label>Nummer</mat-label>
+  <input matInput [(ngModel)]="model.room_number" />
+</mat-form-field>
+<button matButton (click)="create()">Speichern</button>

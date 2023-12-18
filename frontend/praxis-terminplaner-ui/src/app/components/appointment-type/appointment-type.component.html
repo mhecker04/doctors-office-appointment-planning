@@ -1,0 +1,21 @@
+<mat-form-field>
+  <mat-label>Name</mat-label>
+  <input matInput [(ngModel)]="model.appointment_type_name" />
+</mat-form-field>
+<mat-form-field>
+    <input matInput
+           name="selected_time_B"
+           [(ngModel)]="model.duration"
+           [ngxMatTimepicker]="timePicker"
+           placeholder="16:00"
+           readonly />
+    <mat-icon matSuffix
+              (click)="timePicker.open()">
+        watch_later
+    </mat-icon>
+</mat-form-field>
+<ngx-mat-timepicker color="accent"
+                    #timePicker></ngx-mat-timepicker>
+                
+            
+<button matButton (click)="create()">Speichern</button>

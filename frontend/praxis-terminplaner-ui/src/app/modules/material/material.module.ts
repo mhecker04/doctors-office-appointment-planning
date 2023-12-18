@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatListModule } from '@angular/material/list';
+import {NgxMatTimepickerModule} from 'ngx-mat-timepicker';
 
 
 
@@ -23,7 +24,8 @@ import { MatListModule } from '@angular/material/list';
     MatIconModule,
     FormsModule,
     MatGridListModule,
-    MatListModule
+    MatListModule,
+    NgxMatTimepickerModule
   ]
 })
 export class MaterialModule { }

@@ -9,8 +9,10 @@ edition = "2021"
 datalayer = { path = "../datalayer" }
 entities = {path = "../entities" }
 authentication = {path ="../authentication" }
+models = { path = "../models"}
 
-diesel = { version = "2.1.4", features=["mysql"] }
+futures = "0.3"
+async-trait = "0.1.74"
 
 [dependencies.uuid]
 version = "1.5.0"

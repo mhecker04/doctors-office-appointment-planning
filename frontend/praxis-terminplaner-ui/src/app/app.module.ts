@@ -8,19 +8,24 @@ import { CommonModule } from "@angular/common";
 import { BrowserModule } from "@angular/platform-browser";
 import { MaterialModule } from "./modules/material/material.module";
 import { Route, RouterModule } from "@angular/router";
-
+import { AppointmentTypeComponent } from "./components/appointment-type/appointment-type.component";
+import { RoomComponent } from "./components/room/room.component";
 
 
 
 let routes: Route[] = [
     { path: "login", component: LoginComponent },
     { path: "user", component: UserComponent },
-    { path: "", component: AppComponent}
+    { path: "", component: AppComponent},
+    { path: "appointmentType", component: AppointmentTypeComponent },
+    {path: "room", component: RoomComponent}
 ] 
 
 
 @NgModule({
     declarations: [
+        RoomComponent,
+        AppointmentTypeComponent,
         UserComponent,
         LoginComponent,
         HomeComponent,
@@ -31,7 +36,7 @@ let routes: Route[] = [
         BrowserModule,
         MaterialModule,
         CommonModule,
-        RouterModule.forRoot(routes)
+        RouterModule.forRoot(routes),
     ],
     exports: [
         HomeComponent,

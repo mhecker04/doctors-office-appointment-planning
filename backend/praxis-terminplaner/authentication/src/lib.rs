@@ -1,7 +1,6 @@
 
 extern crate bcrypt;
 
-use bcrypt::verify;
 use chrono::Utc;
 use errors::Error;
 use jsonwebtoken::{decode, encode, Algorithm, DecodingKey, EncodingKey, Header, Validation};
@@ -11,21 +10,20 @@ pub mod errors;
 
 const JWT_SECRET: &[u8] = b"superdupergeheim";
 
-pub fn authorize(username: &String, password: &String) -> Result<String, Error> {
+pub async fn authorize(username: &String, password: &String) -> Result<String, Error> {
 
     let user_repository = datalayer::user::UserRepository {};
 
-    let user= user_repository.get_user_by_username(username)
-        .map_err(|_| Error::WrongCredentialsError)?;
+    let user= user_repository.get_by_username(username)
+        .await.map_err(|_| Error::WrongCredentialsError)?;
 
-    let result = verify(password, user.password.unwrap().as_str()).unwrap();
+    let result = bcrypt::verify(password, user.password.as_str());
 
-    if !result {
-        return Err(Error::WrongCredentialsError);
+    match result {
+        Err(_) => Err(Error::WrongCredentialsError),
+        Ok(_) => create_token(user.user_id.unwrap(), user.username)
     }
-
-    create_token(user.user_id, user.username.unwrap())
-
+    
 }
 
 #[derive(Deserialize, Serialize)]
@@ -38,7 +36,8 @@ pub struct Claims {
 fn create_token(user_id: String, username: String) -> Result<String, Error> {
 
     let expiration = Utc::now()
-        .checked_add_signed(chrono::Duration::seconds(300))
+        // todo change later just for testing porpuses set so high
+        .checked_add_signed(chrono::Duration::seconds(30000))
         .expect("valid timestamp")
         .timestamp();
 
@@ -50,7 +49,7 @@ fn create_token(user_id: String, username: String) -> Result<String, Error> {
 
     let header = Header::new(Algorithm::HS512);
 
-    return encode(&header, &claims, &EncodingKey::from_secret(JWT_SECRET))
+    encode(&header, &claims, &EncodingKey::from_secret(JWT_SECRET))
         .map_err(|_| Error::JWTTokenCreationError)
     
 }

@@ -1,5 +1,5 @@
-use rocket::{serde::json::Json, response::status::Custom, http::Status};
-use entities::user::User;
+use models::user::UserModel;
+use rocket::{serde::json::Json, response::status::Custom, http::Status, post};
 
 use business::base::Business;
 
@@ -13,14 +13,13 @@ const business: UserBusiness = UserBusiness {
     repository: UserRepository{}
 };
 
-
 #[post("/", data="<user>")]
-pub fn post_user(token: Token, user: Json<User>) -> Custom<Result<String, &'static str>> {
+pub async fn post_user(token: Token, mut user: Json<UserModel>) -> Custom<Result<String, &'static str>> {
 
-    let result = business.insert(&user);
+    let result = business.insert(&mut user).await;
 
     match result {
-        Ok(v) => Custom(Status::Ok, Ok(String::from("hi"))),
+        Ok(v) => Custom(Status::Ok, Ok(v)),
         Err(e) => Custom(Status::InternalServerError, Err("sorry i fucked up"))
     }
 
