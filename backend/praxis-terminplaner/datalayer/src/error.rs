@@ -1,5 +1,8 @@
 
-
-pub enum Error {
-    NoPrimaryKeySpecified
+#[derive(Debug)]
+pub enum RepositoryError {
+    NoConnection,
+    NoRecordFound,
+    MappingError,
+    NoSearchBusinessFound
 }

@@ -1,0 +1,16 @@
+<mat-table [dataSource]="models">
+
+    <ng-container matColumnDef="appointmentTypeName">
+        <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.appointment_type_name}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="duration">
+        <mat-header-cell *matHeaderCellDef>Dauer</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.duration}} </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="getDisplayColumns()"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: getDisplayColumns();"></mat-row>
+
+</mat-table>

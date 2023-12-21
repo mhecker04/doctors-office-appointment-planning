@@ -1,5 +1,6 @@
 #[macro_use] extern crate rocket;
 
+use business::search::search_models;
 use rocket::Request;
 use rocket::Response;
 use rocket::fairing::Fairing;
@@ -14,6 +15,7 @@ mod request_guards;
 mod response_models;
 mod routes;
 
+use routes::search;
 use routes::user;
 use routes::room;
 
@@ -44,13 +46,13 @@ fn options() {
 
 #[launch]
 fn rocket() -> _ {
-
     rocket::build()
         .attach(Cors)
         .mount("/auth", routes![auth::login])
         .mount("/user", routes![user::post_user])
         .mount("/appointmentType", routes![appointment_type::insert_appointment_type])
         .mount("/room", routes![room::insert_room])
+        .mount("/search", routes![search::user, search::appointment_type, search::room])
         .mount("/", routes![options])
 
 }

@@ -1,11 +1,14 @@
 use async_trait::async_trait;
-use datalayer::base::{Repository, RepositoryError};
+use datalayer::base::Repository;
+use datalayer::error::RepositoryError;
+use datalayer::search::SearchRepository;
+use models::Model;
 
 #[async_trait]
 pub trait Business<TRepository, TModel, TPrimaryKey>
 where
-    TRepository: Repository<TModel, TPrimaryKey>,
-    TModel: Send + Sync,
+    TRepository: Repository<TModel, TPrimaryKey> + SearchRepository<TModel, TPrimaryKey>,
+    TModel: Send + Sync + Model<TPrimaryKey>,
     TPrimaryKey: Send + Sync
 {
     fn get_repository(&self) -> &TRepository;
@@ -25,4 +28,5 @@ where
     async fn get_by_id(&self, id: &TPrimaryKey) -> Result<TModel, RepositoryError> {
         self.get_repository().get_by_id(id).await
     }
+
 }

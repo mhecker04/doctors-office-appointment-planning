@@ -20,7 +20,7 @@ pub async fn post_user(token: Token, mut user: Json<UserModel>) -> Custom<Result
 
     match result {
         Ok(v) => Custom(Status::Ok, Ok(v)),
-        Err(e) => Custom(Status::InternalServerError, Err("sorry i fucked up"))
+        Err(e) => Custom(Status::InternalServerError, Err("failed to create user"))
     }
 
 }

@@ -2,6 +2,7 @@
 pub mod appointment_type;
 pub mod user;
 pub mod room;
+pub mod doctor_appointment_type;
 
 pub trait Model<TPrimaryKey> {
 

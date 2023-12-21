@@ -14,9 +14,7 @@ export class RoomModel extends BaseModel<string | undefined> {
     }
 
     override getPrimaryKey(): string | undefined {
-        throw new Error("Method not implemented.");
+        return this.room_id;
     }
-
-
 
 }

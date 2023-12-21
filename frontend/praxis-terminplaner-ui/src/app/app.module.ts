@@ -10,16 +10,23 @@ import { MaterialModule } from "./modules/material/material.module";
 import { Route, RouterModule } from "@angular/router";
 import { AppointmentTypeComponent } from "./components/appointment-type/appointment-type.component";
 import { RoomComponent } from "./components/room/room.component";
+import { SearchComponent } from "./components/search/search.component";
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatInputModule } from "@angular/material/input";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { SearchLayoutModule } from "./modules/search-layout.module";
+import { RoomSearchLayoutComponent } from "./components/search/layouts/room-search-layout/room-search-layout.component";
 
 
 
 let routes: Route[] = [
     { path: "login", component: LoginComponent },
     { path: "user", component: UserComponent },
-    { path: "", component: AppComponent},
+    { path: "", component: AppComponent },
     { path: "appointmentType", component: AppointmentTypeComponent },
-    {path: "room", component: RoomComponent}
-] 
+    { path: "room", component: RoomComponent },
+    { path: "search", component: SearchComponent },
+]
 
 
 @NgModule({
@@ -31,11 +38,14 @@ let routes: Route[] = [
         HomeComponent,
         ToolbarComponent,
         AppComponent,
+        SearchComponent,
     ],
     imports: [
         BrowserModule,
         MaterialModule,
+        SearchLayoutModule,
         CommonModule,
+        BrowserAnimationsModule,
         RouterModule.forRoot(routes),
     ],
     exports: [

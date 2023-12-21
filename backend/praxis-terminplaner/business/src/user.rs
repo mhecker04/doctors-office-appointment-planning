@@ -1,6 +1,7 @@
-use datalayer::user::UserRepository;
+use async_trait::async_trait;
+use datalayer::{user::UserRepository, error::RepositoryError, search::SearchRepository};
 use models::user::UserModel;
-use crate::base::Business;
+use crate::{base::Business, search::SearchBusiness, implement_search_business};
 
 pub struct UserBusiness {
 
@@ -16,3 +17,5 @@ impl Business<UserRepository, UserModel, String> for UserBusiness {
     }
 
 }
+
+implement_search_business!(UserBusiness, UserModel, String);

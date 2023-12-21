@@ -58,8 +58,6 @@ pub fn validate_token(token: &str) -> Result<Claims, Error> {
 
     let access_token = &token[7..];
 
-    println!("{}", access_token);
-
     let decode = 
         decode::<Claims>(&access_token, 
             &DecodingKey::from_secret(JWT_SECRET), 

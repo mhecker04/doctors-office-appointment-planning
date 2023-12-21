@@ -1,0 +1,11 @@
+<mat-table [dataSource]="models">
+
+    <ng-container matColumnDef="username">
+        <mat-header-cell *matHeaderCellDef>Benutzername</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.username}} </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="getDisplayColumns()"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: getDisplayColumns();"></mat-row>
+
+</mat-table>

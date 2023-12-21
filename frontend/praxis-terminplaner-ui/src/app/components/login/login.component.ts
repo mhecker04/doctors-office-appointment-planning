@@ -26,10 +26,8 @@ export class LoginComponent {
         
         if (!success) {
 
-        console.log(success);
           this.loginFailed = true;
           this.test = "nachher";
-          console.log(this);
           
         }
       });

@@ -43,8 +43,8 @@ export class ApiService {
         return await this.sendRequest("POST", url, parameters);
     }
 
-    static async get<TParameters, TResponse>(url: string, parameters: TParameters): Promise<TResponse> {
-        return await this.sendRequest("GET", url, parameters);
+    static async get<TParameters, TResponse>(url: string, parameters: TParameters, queryParameters: any = null): Promise<TResponse> {
+        return await this.sendRequest("GET", url, parameters, queryParameters);
     }
 
     static async delete<TParameters, TResponse>(url: string, parameters: TParameters): Promise<TResponse> {
@@ -52,10 +52,10 @@ export class ApiService {
     }
 
     static async put<TParameters, TResponse>(url: string, parameters: TParameters): Promise<TResponse> {
-        return await this.sendRequest("DELETE", url, parameters);
+        return await this.sendRequest("PUT", url, parameters);
     }
 
-    private static async sendRequest<TParameters, TResponse>(method: string, url: string, parameters: TParameters): Promise<TResponse> {
+    private static async sendRequest<TParameters, TResponse>(method: string, url: string, parameters: TParameters, queryParameters: any = null): Promise<TResponse> {
 
         let token = localStorage.getItem("token");
 
@@ -63,13 +63,26 @@ export class ApiService {
             "Authorization": "Bearer " + token
         }
 
+        let requestUrl = this.BASE_URL + url;
+
+
+        if (queryParameters != null) {
+            requestUrl += "?" + new URLSearchParams(queryParameters)
+        }
+
         let requestInit: RequestInit = {
             method: method,
             headers: headers,
-            body: JSON.stringify(parameters)
         }
 
-        let result = await fetch(this.BASE_URL + url, requestInit);
+        if(parameters != null) {
+            requestInit.body = JSON.stringify(parameters)
+        }
+
+        console.log(requestUrl);
+        
+
+        let result = await fetch(requestUrl, requestInit);
 
         return await result.json();
     }

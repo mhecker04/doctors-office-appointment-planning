@@ -27,7 +27,6 @@ export class ModelComponent<TModel> implements OnInit {
             return;
         }
         this.model = this.modelService.getInitialModel();
-        console.log(this.model);
         
     }
 
