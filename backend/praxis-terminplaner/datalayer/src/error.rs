@@ -4,5 +4,6 @@ pub enum RepositoryError {
     NoConnection,
     NoRecordFound,
     MappingError,
-    NoSearchBusinessFound
+    NoPersonSpecified,
+    InvalidDateTimeFormat
 }

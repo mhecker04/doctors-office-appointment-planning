@@ -12,22 +12,24 @@ import { AppointmentTypeComponent } from "./components/appointment-type/appointm
 import { RoomComponent } from "./components/room/room.component";
 import { SearchComponent } from "./components/search/search.component";
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatInputModule } from "@angular/material/input";
-import { MatFormFieldModule } from "@angular/material/form-field";
 import { SearchLayoutModule } from "./modules/search-layout.module";
-import { RoomSearchLayoutComponent } from "./components/search/layouts/room-search-layout/room-search-layout.component";
-
-
+import { RoomAppointmentTypeTabComponent } from "./components/room/tabs/room-appointment-type-tab/room-appointment-type-tab.component";
+import { SearchDialogComponent } from "./components/dialogs/search-dialog/search-dialog.component";
+import { DoctorComponent } from "./components/doctor/doctor.component";
+import { DoctorAppointmentTypeTabComponent } from "./components/doctor/tabs/doctor-appointment-type-tab/doctor-appointment-type-tab.component";
+import { SearcherComponent } from "./components/search/searcher/searcher.component";
+import { AppointmentPlanningComponent } from "./components/appointment-planning/appointment-planning.component";
 
 let routes: Route[] = [
     { path: "login", component: LoginComponent },
     { path: "user", component: UserComponent },
-    { path: "", component: AppComponent },
     { path: "appointmentType", component: AppointmentTypeComponent },
-    { path: "room", component: RoomComponent },
-    { path: "search", component: SearchComponent },
+    { path: "room/:id", component: RoomComponent },
+    { path: "search", component: SearchComponent }, 
+    { path: "doctor/:id", component: DoctorComponent},
+    { path: "doctor", component: DoctorComponent},
+    { path: "appointment", component: AppointmentPlanningComponent }
 ]
-
 
 @NgModule({
     declarations: [
@@ -39,6 +41,12 @@ let routes: Route[] = [
         ToolbarComponent,
         AppComponent,
         SearchComponent,
+        RoomAppointmentTypeTabComponent,
+        SearchDialogComponent,
+        DoctorComponent,
+        DoctorAppointmentTypeTabComponent,
+        SearcherComponent,
+        AppointmentPlanningComponent
     ],
     imports: [
         BrowserModule,

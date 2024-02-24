@@ -5,14 +5,14 @@ import { ActivatedRoute } from '@angular/router';
 import { RoomService } from 'src/app/services/room.service';
 
 @Component({
-  selector: 'app-room',
-  templateUrl: './room.component.html',
-  styleUrls: ['./room.component.css'],
+    selector: 'app-room',
+    templateUrl: './room.component.html',
+    styleUrls: ['./room.component.css'],
 })
-export class RoomComponent extends ModelComponent<RoomModel> { 
+export class RoomComponent extends ModelComponent<RoomModel> {
 
-  constructor(route: ActivatedRoute, roomService: RoomService) {
-    super(route, roomService);
-  }
+    constructor(route: ActivatedRoute, roomService: RoomService) {
+        super(route, roomService);
+    }
 
 }

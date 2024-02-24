@@ -6,6 +6,7 @@ pub use super::doctor::Entity as Doctor;
 pub use super::doctor_appointment_type::Entity as DoctorAppointmentType;
 pub use super::patient::Entity as Patient;
 pub use super::permission::Entity as Permission;
+pub use super::person::Entity as Person;
 pub use super::role::Entity as Role;
 pub use super::role_permission::Entity as RolePermission;
 pub use super::room::Entity as Room;

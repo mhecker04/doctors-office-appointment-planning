@@ -1,23 +1,37 @@
 import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { AvailableRessourcesModel } from 'src/app/models/available-appointment-ressources-model';
+import { AppointmentService } from 'src/app/services/appointment.service';
 
 
 @Component({
-  selector: 'app-appointment-planning',
-  templateUrl: './appointment-planning.component.html',
-  styleUrls: ['./appointment-planning.component.css'],
+    selector: 'app-appointment-planning',
+    templateUrl: './appointment-planning.component.html',
+    styleUrls: ['./appointment-planning.component.css'],
 
 })
 export class AppointmentPlanningComponent {
 
-  AvailableWeekdays: string[] = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag']
+    appointmentTypeId: string;
+    datetime: Date;
+    appointmentService: AppointmentService;
+    availableRessources: AvailableRessourcesModel;
 
-  Weekdays = new FormControl();
+    constructor(appointmentService: AppointmentService) {
+        this.appointmentTypeId = "";
+        this.datetime = new Date();
+        this.appointmentService = appointmentService;
+        this.availableRessources = new AvailableRessourcesModel();
+    }
 
-  From = new FormControl();
+    setAppointmentTypeId(appointmentTypeId: string) {
+        this.appointmentTypeId = appointmentTypeId;
+    }
 
-  To = new FormControl();
-
-
+    async getAvailableRessources() {
+        this.availableRessources =
+            await this.appointmentService.getAvailableRessources(this.appointmentTypeId, this.datetime) || this.availableRessources;
+        
+    }
 
 }

@@ -11,8 +11,12 @@ export class UserModel extends BaseModel<string | undefined> {
         this.password = password;
     }
 
-    override getPrimaryKey() {
+    override getPrimaryKey(): string | undefined {
         return this.user_id;
+    }
+
+    override setPrimaryKey(primaryKey: string | undefined): void {
+        this.user_id = primaryKey;
     }
 
 }

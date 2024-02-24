@@ -4,18 +4,28 @@ import { ApiService } from './api.service';
 @Injectable({
   providedIn: 'root'
 })
-export abstract class ModelService<TModel> {
+export abstract class ModelService<TModel extends object> {
 
     abstract baseUrl(): string;
 
     abstract getInitialModel(): TModel
 
-    async create(model: TModel) {
+    async create(model: TModel): Promise<string | null> {
         return ApiService.post(this.baseUrl(), model);
     }
 
     async get(id: string): Promise<TModel> {
-        return ApiService.get(this.baseUrl() + "/" +id, null);
+        let apiModel = await ApiService.get(this.baseUrl() + "/" +id, null);
+
+        let model = this.getInitialModel();
+
+        Object.assign(model, apiModel);
+
+        console.log(model, apiModel);
+        
+
+        return model;
+
     }
 
     async delete(id: string) {

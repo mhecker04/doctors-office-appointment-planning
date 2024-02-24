@@ -3,7 +3,7 @@
 use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq, Deserialize, Serialize)]
+#[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq, Serialize, Deserialize)]
 #[sea_orm(table_name = "user")]
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
@@ -14,24 +14,8 @@ pub struct Model {
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
-    #[sea_orm(has_many = "super::doctor::Entity")]
-    Doctor,
-    #[sea_orm(has_many = "super::patient::Entity")]
-    Patient,
     #[sea_orm(has_many = "super::user_permission::Entity")]
     UserPermission,
-}
-
-impl Related<super::doctor::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::Doctor.def()
-    }
-}
-
-impl Related<super::patient::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::Patient.def()
-    }
 }
 
 impl Related<super::user_permission::Entity> for Entity {

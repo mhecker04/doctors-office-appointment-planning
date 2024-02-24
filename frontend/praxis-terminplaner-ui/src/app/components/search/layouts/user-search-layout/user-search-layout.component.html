@@ -6,6 +6,6 @@
     </ng-container>
 
     <mat-header-row *matHeaderRowDef="getDisplayColumns()"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: getDisplayColumns();"></mat-row>
+    <mat-row (click)="onRowClick(row)" *matRowDef="let row; columns: getDisplayColumns();"></mat-row>
 
 </mat-table>

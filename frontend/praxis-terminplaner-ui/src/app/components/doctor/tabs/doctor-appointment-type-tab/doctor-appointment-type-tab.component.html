@@ -1,0 +1,12 @@
+<button mat-raised-button color="primary" (click)="openDialog()">Hinzufügen</button>
+<mat-table [dataSource]="models">
+
+    <ng-container matColumnDef="appointmentTypeName">
+        <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.appointment_type.appointment_type_name}} </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="['appointmentTypeName']"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: ['appointmentTypeName'];"></mat-row>
+
+</mat-table>

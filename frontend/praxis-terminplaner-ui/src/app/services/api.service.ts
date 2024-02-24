@@ -39,23 +39,23 @@ export class ApiService {
 
     }
 
-    static async post<TParameters, TResponse>(url: string, parameters: TParameters): Promise<TResponse> {
+    static async post<TParameters, TResponse>(url: string, parameters: TParameters): Promise<TResponse | null> {
         return await this.sendRequest("POST", url, parameters);
     }
 
-    static async get<TParameters, TResponse>(url: string, parameters: TParameters, queryParameters: any = null): Promise<TResponse> {
+    static async get<TParameters, TResponse>(url: string, parameters: TParameters, queryParameters: any = null): Promise<TResponse | null> {
         return await this.sendRequest("GET", url, parameters, queryParameters);
     }
 
-    static async delete<TParameters, TResponse>(url: string, parameters: TParameters): Promise<TResponse> {
+    static async delete<TParameters, TResponse>(url: string, parameters: TParameters): Promise<TResponse | null> {
         return await this.sendRequest("DELETE", url, parameters);
     }
 
-    static async put<TParameters, TResponse>(url: string, parameters: TParameters): Promise<TResponse> {
+    static async put<TParameters, TResponse>(url: string, parameters: TParameters): Promise<TResponse | null> {
         return await this.sendRequest("PUT", url, parameters);
     }
 
-    private static async sendRequest<TParameters, TResponse>(method: string, url: string, parameters: TParameters, queryParameters: any = null): Promise<TResponse> {
+    private static async sendRequest<TParameters, TResponse>(method: string, url: string, parameters: TParameters, queryParameters: any = null): Promise<TResponse | null> {
 
         let token = localStorage.getItem("token");
 
@@ -79,12 +79,13 @@ export class ApiService {
             requestInit.body = JSON.stringify(parameters)
         }
 
-        console.log(requestUrl);
-        
-
         let result = await fetch(requestUrl, requestInit);
 
-        return await result.json();
+        try {
+            return await result.json();
+        } catch {
+            return null;
+        }
     }
 
 }

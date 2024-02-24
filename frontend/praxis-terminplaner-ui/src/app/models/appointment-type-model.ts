@@ -17,4 +17,8 @@ export class AppointmentTypeModel extends BaseModel<string | undefined>{
         return this.appointment_type_id;
     }
 
+    override setPrimaryKey(primaryKey: string | undefined): void {
+        this.appointment_type_id = primaryKey;
+    }
+
 }

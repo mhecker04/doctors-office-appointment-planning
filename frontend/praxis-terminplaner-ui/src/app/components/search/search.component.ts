@@ -24,7 +24,15 @@ export class SearchComponent {
     }
 
     async search() {
-        this.models = await this.searchService.search(this.searchKey, this.searchClause);
+
+        let searchModels = await this.searchService.search(this.searchKey, this.searchClause);
+
+        if (searchModels == null) {
+            console.error("Search failed");
+            return;
+        }
+
+        this.models = searchModels;
     }
 
 }

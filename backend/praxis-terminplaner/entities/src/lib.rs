@@ -14,3 +14,4 @@ pub mod room;
 pub mod room_appointment_type;
 pub mod user;
 pub mod user_permission;
+pub mod person;

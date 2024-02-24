@@ -12,9 +12,20 @@ import { NgxMatTimepickerModule } from 'ngx-mat-timepicker';
 import { MatSelectModule } from '@angular/material/select';
 import { MatOptionModule } from '@angular/material/core';
 import { MatTableModule } from '@angular/material/table';
+import { MatTabsModule } from '@angular/material/tabs';
+import {
+
+    MatDialogModule,
+} from '@angular/material/dialog';
+
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+
 
 @NgModule({
     declarations: [
+    ],
+    imports: [
     ],
     exports: [
         CommonModule,
@@ -29,7 +40,15 @@ import { MatTableModule } from '@angular/material/table';
         NgxMatTimepickerModule,
         MatSelectModule,
         MatOptionModule,
-        MatTableModule
+        MatTableModule,
+        MatTabsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        FormsModule,
+        MatButtonModule,
+        MatDialogModule,
+        MatDatepickerModule,
+        MatNativeDateModule
     ]
 })
 export class MaterialModule { }

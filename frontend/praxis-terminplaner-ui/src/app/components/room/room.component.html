@@ -6,4 +6,10 @@
   <mat-label>Nummer</mat-label>
   <input matInput [(ngModel)]="model.room_number" />
 </mat-form-field>
-<button matButton (click)="create()">Speichern</button>
+<button mat-raised-button color="primary" (click)="save()">Speichern</button>
+
+<mat-tab-group>
+    <mat-tab label="Termin-Arten">
+        <app-room-appointment-type-tab [parent]="model" [parentTabs]="tabs"></app-room-appointment-type-tab> 
+    </mat-tab>
+</mat-tab-group>

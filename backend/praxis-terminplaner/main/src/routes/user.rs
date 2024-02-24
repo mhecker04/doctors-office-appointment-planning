@@ -3,24 +3,16 @@ use rocket::{serde::json::Json, response::status::Custom, http::Status, post};
 
 use business::base::Business;
 
-
 use business::user::UserBusiness;
-use datalayer::user::UserRepository;
+use datalayer::{user::UserRepository, error::RepositoryError};
 
-use crate::request_guards::authentication::Token;
+use crate::{request_guards::authentication::Token, crud_endpoints};
+
+use paste::paste;
+
 
 const business: UserBusiness = UserBusiness {
     repository: UserRepository{}
 };
 
-#[post("/", data="<user>")]
-pub async fn post_user(token: Token, mut user: Json<UserModel>) -> Custom<Result<String, &'static str>> {
-
-    let result = business.insert(&mut user).await;
-
-    match result {
-        Ok(v) => Custom(Status::Ok, Ok(v)),
-        Err(e) => Custom(Status::InternalServerError, Err("failed to create user"))
-    }
-
-}
+crud_endpoints!(business, UserModel, user);

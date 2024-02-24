@@ -5,12 +5,11 @@
             [value]="searchDefiniton.searchKey">{{searchDefiniton.displayName}}</mat-option>
     </mat-select>
 </mat-form-field>
-<button matButton (click)="search()">Suchen</button>
+<button mat-raised-button color="primary" (click)="search()">Suchen</button>
 <mat-form-field>
     <mat-label>Suchtext</mat-label>
     <input matInput type="text" [(ngModel)]="searchClause" />
 </mat-form-field>
-
 
 <div>
     <ng-container *ngComponentOutlet="

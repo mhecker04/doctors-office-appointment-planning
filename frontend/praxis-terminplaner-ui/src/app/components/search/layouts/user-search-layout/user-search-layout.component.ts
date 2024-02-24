@@ -10,9 +10,7 @@ import { UserModel } from 'src/app/models/user-model';
 export class UserSearchLayoutComponent extends SearchLayoutComponent<UserModel> {
     
     override getDisplayColumns(): string[] {
-
         return ["username"]
-
     }
 
 }

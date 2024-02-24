@@ -17,4 +17,8 @@ export class RoomModel extends BaseModel<string | undefined> {
         return this.room_id;
     }
 
+    override setPrimaryKey(primaryKey: string | undefined): void {
+        this.room_id = primaryKey;
+    }
+
 }

@@ -1,0 +1,12 @@
+:host {
+  display: block;
+}
+
+.icon-input {
+  padding-right: 24px; /* Adjust the padding to accommodate the icon */
+}
+
+::ng-deep .mat-form-field-suffix {
+  cursor: pointer;
+  pointer-events: auto;
+}

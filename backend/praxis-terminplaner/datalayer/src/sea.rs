@@ -1,9 +1,12 @@
 use async_trait::async_trait;
+use entities::appointment::Entity;
 use models::Model;
-use sea_orm::{EntityTrait, PrimaryKeyTrait, IntoActiveModel, ActiveModelTrait, ActiveModelBehavior, DatabaseConnection, ColumnTrait, sea_query::SimpleExpr, Condition};
-use serde::{Serialize, de::DeserializeOwned};
+use sea_orm::{
+    sea_query::{Func, SimpleExpr}, ActiveModelBehavior, ActiveModelTrait, ColumnTrait, Condition, ConnectionTrait, DatabaseConnection, EntityTrait, IntoActiveModel, ModelTrait, PrimaryKeyTrait, Related
+};
+use serde::{de::DeserializeOwned, Serialize};
 
-use crate::{error::RepositoryError, base::map_to_model};
+use crate::{base::map_to_model, error::RepositoryError};
 
 #[async_trait]
 pub trait SeaOrmRepository<'a, TEntity, TActiveModel, TModel, TPrimaryKey>
@@ -18,7 +21,8 @@ where
     for<'de> <<TActiveModel as ActiveModelTrait>::Entity as EntityTrait>::Model:
         serde::de::Deserialize<'de> + Serialize,
     TModel: Model<TPrimaryKey> + DeserializeOwned + Serialize + Send + Sync,
-    TPrimaryKey: Into<<TEntity::PrimaryKey as PrimaryKeyTrait>::ValueType> + Send + Sync + 'a,
+    TPrimaryKey:
+        Into<<TEntity::PrimaryKey as PrimaryKeyTrait>::ValueType> + Send + Sync + 'a + Clone,
 {
     fn create_new_primary_key(&self) -> TPrimaryKey;
 
@@ -62,34 +66,43 @@ where
     where
         TPrimaryKey: 'a,
     {
+        let database_model = self.get_entity(id).await?;
+
+        map_to_model(&database_model)
+    }
+
+    async fn get_entity(
+        &self,
+        id: &'a TPrimaryKey,
+    ) -> Result<<TEntity as EntityTrait>::Model, RepositoryError> {
         let db = self.get_connection().await;
 
         let model = TEntity::find_by_id(id).one(&db).await;
 
         match model {
             Ok(v) => match v {
-                Some(m) => map_to_model(&m),
+                Some(m) => Ok(m),
                 None => Err(RepositoryError::NoRecordFound),
             },
             Err(_) => Err(RepositoryError::NoConnection),
         }
     }
 
-    async fn delete(&self, id: &'a TPrimaryKey) -> Result<(), RepositoryError> {
+    async fn delete(&self, id: &'a TPrimaryKey) -> Result<TPrimaryKey, RepositoryError> {
         let db = self.get_connection().await;
 
         let delete_result = TEntity::delete_by_id(id).exec(&db).await;
 
         match delete_result {
             Err(_) => Err(RepositoryError::NoRecordFound),
-            Ok(_) => Ok(()),
+            Ok(d) => Ok(id.clone()),
         }
     }
-
 }
 
 pub fn get_search_predicate<TColumn>(search_clause: &String, columns: Vec<TColumn>) -> Condition
-    where TColumn: ColumnTrait
+where
+    TColumn: ColumnTrait,
 {
     let mut predicate = Condition::any();
 
@@ -98,6 +111,38 @@ pub fn get_search_predicate<TColumn>(search_clause: &String, columns: Vec<TColum
     }
 
     predicate
-
 }
 
+
+
+
+pub async fn add_related_entity<TModel, TSeaModel, TConnection, TRelatedEntity, TPrefetchPath>(
+    model: TModel,
+    sea_model: TSeaModel,
+    connection: TConnection,
+    prefetch_path: TPrefetchPath
+) -> Result<(), RepositoryError>
+    where TSeaModel: ModelTrait,
+    <TSeaModel as ModelTrait>::Entity: Related<TRelatedEntity>,
+    TRelatedEntity: EntityTrait,
+    TConnection: ConnectionTrait,
+    TPrefetchPath: PrefetchPath<TModel, TRelatedEntity>
+{
+
+    let related_model = sea_model.find_related(prefetch_path.get_related_entity())
+        .one(&connection)
+        .await
+        .map_err(|_| RepositoryError::NoConnection)?;
+
+    match related_model {
+        Some(related_model) => {
+            prefetch_path.set_in_model(model, related_model);
+            Ok(())
+        }
+        None => {
+            Ok(())
+        }
+    }
+
+
+}

@@ -19,14 +19,12 @@ pub trait Repository<TModel, TPrimaryKey> {
 
     async fn get_by_id(&self, id: &TPrimaryKey) -> Result<TModel, RepositoryError>;
 
-    async fn delete(&self, id: &TPrimaryKey) -> Result<(), RepositoryError>;
+    async fn delete(&self, id: &TPrimaryKey) -> Result<TPrimaryKey, RepositoryError>;
 }
 
 #[async_trait]
 pub trait ListRepository<TModel, TPrimaryKey>: Repository<TModel, TPrimaryKey> {
-    
-    async fn get_by_parent_id(&self, id: &TPrimaryKey);
-
+    async fn get_by_parent_id(&self, id: &TPrimaryKey) -> Result<Vec<TModel>, RepositoryError>;
 }
 
 pub fn map_to_model<TSource, TModel>(source: &TSource) -> Result<TModel, RepositoryError>
@@ -53,7 +51,6 @@ where
     }
 
     Ok(result)
-
 }
 
 #[macro_export]
@@ -73,7 +70,7 @@ macro_rules! implement_repository {
                 SeaOrmRepository::get_by_id(self, id).await
             }
 
-            async fn delete(&self, id: &$primary_key) -> Result<(), RepositoryError> {
+            async fn delete(&self, id: &$primary_key) -> Result<$primary_key, RepositoryError> {
                 SeaOrmRepository::delete(self, id).await
             }
         }

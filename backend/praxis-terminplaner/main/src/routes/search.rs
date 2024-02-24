@@ -1,6 +1,6 @@
 use business::{search::SearchBusiness, room::RoomBusiness, user::UserBusiness, appointment_type::AppointmentTypeBusiness};
 use datalayer::{room::RoomRepository, user::UserRepository, appointment_type::AppointmentTypeRepository};
-use models::{Model, room::RoomModel, user::UserModel, appointment_type::AppointmentTypeModel};
+use models::{room::RoomModel, user::UserModel, appointment_type::AppointmentTypeModel};
 
 
 use crate::request_guards::authentication::Token;
@@ -21,7 +21,7 @@ macro_rules! search_route {
 
             match search_models_result {
                 Ok(models) => Custom(Status::Ok, Ok(Json(models))),
-                Err(e) => Custom(Status::InternalServerError, Err("search failed")),
+                Err(_) => Custom(Status::InternalServerError, Err("search failed")),
             }
         }
     };
