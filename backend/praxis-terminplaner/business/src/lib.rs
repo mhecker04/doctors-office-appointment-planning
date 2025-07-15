@@ -8,3 +8,4 @@ pub mod room_appointment_type;
 pub mod person;
 pub mod doctor;
 pub mod appointment;
+pub mod patient;

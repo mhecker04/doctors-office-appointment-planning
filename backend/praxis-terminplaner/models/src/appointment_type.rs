@@ -1,9 +1,9 @@
 use chrono::NaiveTime;
 use serde::{Deserialize, Serialize};
-
 use crate::Model;
+use tools::datetime::deserialize_naive_time;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct AppointmentTypeModel {
     pub appointment_type_id: Option<String>,
     pub appointment_type_name: String,
@@ -21,22 +21,4 @@ impl Model<String> for AppointmentTypeModel {
     }
 }
 
-fn deserialize_naive_time<'de, D>(deserializer: D) -> Result<NaiveTime, D::Error>
-where
-    D: serde::Deserializer<'de>,
-{
-    let s: &str = Deserialize::deserialize(deserializer)?;
 
-    // Define multiple time formats to attempt parsing
-    let formats = ["%I:%M %p", "%H:%M:%S"];
-
-    for format in formats {
-        let result = NaiveTime::parse_from_str(s, format);
-        match result {
-            Ok(time) => return Ok(time),
-            _ => {} 
-        }            
-    }
-
-    Err(serde::de::Error::custom("Failed to parse NaiveTime"))
-}

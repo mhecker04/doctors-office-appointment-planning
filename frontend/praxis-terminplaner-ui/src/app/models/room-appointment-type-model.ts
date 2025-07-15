@@ -1,8 +1,7 @@
 import { AppointmentTypeModel } from "./appointment-type-model";
 import { BaseModel } from "./base-model";
 
-export class RoomAppointmentTypeModel extends BaseModel<string>{
-    
+export class RoomAppointmentTypeModel extends BaseModel<string> {
 
     room_appointment_type_id: string | undefined;
     appointment_type_id: string;

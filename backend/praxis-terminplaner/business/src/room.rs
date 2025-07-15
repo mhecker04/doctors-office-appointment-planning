@@ -19,4 +19,11 @@ impl Business<RoomRepository, RoomModel, String> for RoomBusiness {
     }
 }
 
+
+impl RoomBusiness {
+    pub async fn load_rooms_qualified_for_appointment_type(&self, appointment_type_id: &String) -> Result<Vec<RoomModel>, RepositoryError> {
+        self.repository.load_rooms_qualified_for_appointment_type(appointment_type_id).await
+    }
+}
+
 implement_search_business!(RoomBusiness, RoomModel, String);

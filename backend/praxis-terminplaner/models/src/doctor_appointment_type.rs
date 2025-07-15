@@ -4,12 +4,12 @@ use crate::{Model, appointment_type::AppointmentTypeModel};
 
 
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct DoctorAppointmentTypeModel {
 
-    doctor_appointment_type_id: Option<String>,
-    appointment_type_id: String,
-    doctor_id: String,
+    pub doctor_appointment_type_id: Option<String>,
+    pub appointment_type_id: String,
+    pub doctor_id: String,
     pub appointment_type: Option<AppointmentTypeModel>
 
 }

@@ -8,12 +8,12 @@ use serde::{Deserialize, Serialize};
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub appointment_id: String,
-    pub appointment_type_id: String,
-    pub doctor_id: String,
-    pub from: DateTime,
-    pub patient_id: String,
+    pub appointment_type_id: Option<String>,
+    pub doctor_id: Option<String>,
+    pub start_date_time: Option<DateTime>,
+    pub end_date_time: Option<DateTime>,
+    pub patient_id: Option<String>,
     pub room_id: Option<String>,
-    pub to: Option<DateTime>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

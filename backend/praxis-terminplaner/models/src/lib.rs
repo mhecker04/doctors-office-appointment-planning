@@ -9,6 +9,7 @@ pub mod doctor;
 pub mod patient;
 pub mod appointment;
 pub mod available_appointment_resources;
+pub mod possible_appointment;
 
 pub trait Model<TPrimaryKey> {
 

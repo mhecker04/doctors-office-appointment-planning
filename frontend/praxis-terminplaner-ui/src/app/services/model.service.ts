@@ -18,11 +18,7 @@ export abstract class ModelService<TModel extends object> {
         let apiModel = await ApiService.get(this.baseUrl() + "/" +id, null);
 
         let model = this.getInitialModel();
-
         Object.assign(model, apiModel);
-
-        console.log(model, apiModel);
-        
 
         return model;
 
@@ -34,6 +30,10 @@ export abstract class ModelService<TModel extends object> {
 
     async update(model: TModel) {
         return ApiService.put(this.baseUrl(), model);
+    }
+
+    async getAll(): Promise<TModel[] | null> {
+        return await ApiService.get("search/" + this.baseUrl(), null, {search_clause: ""});
     }
 
 }

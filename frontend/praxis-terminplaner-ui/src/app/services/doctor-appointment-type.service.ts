@@ -7,8 +7,8 @@ import { DoctorAppointmentTypeModel } from '../models/doctor-appointment-type-mo
 })
 export class DoctorAppointmentTypeService extends ListService<DoctorAppointmentTypeModel>{
 
-    constructor() { 
-        super();
+    override getInitialModel(): DoctorAppointmentTypeModel {
+        return new DoctorAppointmentTypeModel();
     }
 
     override baseUrl(): string {

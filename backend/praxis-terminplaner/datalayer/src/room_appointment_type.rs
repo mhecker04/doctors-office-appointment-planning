@@ -1,13 +1,13 @@
 use async_trait::async_trait;
-use entities::{appointment, appointment_type, room_appointment_type, room};
+use entities::{appointment_type, room_appointment_type};
 use models::room_appointment_type::RoomAppointmentTypeModel;
-use sea_orm::{ColumnTrait, DatabaseConnection, EntityTrait, LoaderTrait, ModelTrait, QueryFilter};
+use sea_orm::{ColumnTrait, DatabaseConnection, EntityTrait, LoaderTrait, QueryFilter};
 
 use crate::{
-    base::{map_to_vector, ListRepository, Repository, map_to_model},
+    base::{map_to_model, map_to_vector, ListRepository, Repository},
     error::RepositoryError,
     implement_repository,
-    sea::SeaOrmRepository,
+    sea::{map_sea_orm_error, SeaOrmRepository},
 };
 
 pub struct RoomAppointmentTypeRepository;
@@ -66,6 +66,31 @@ impl ListRepository<RoomAppointmentTypeModel, String> for RoomAppointmentTypeRep
         Ok(result_models)
 
     }
+}
+
+impl RoomAppointmentTypeRepository {
+    pub async fn get_by_appointment_type_id(
+        &self,
+        appointment_type_id: &String,
+    ) -> Result<Vec<RoomAppointmentTypeModel>, RepositoryError> {
+
+        let connection = self.get_connection().await;
+
+        let room_appointment_type_sea_models = entities::room_appointment_type::Entity::find()
+            .filter(
+                entities::room_appointment_type::Column::AppointmentTypeId
+                    .eq(appointment_type_id),
+            )
+            .all(&connection)
+            .await
+            .map_err(map_sea_orm_error)?;
+
+
+        map_to_vector(&room_appointment_type_sea_models)
+
+    }
+
+
 }
 
 implement_repository!(

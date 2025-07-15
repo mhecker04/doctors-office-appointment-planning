@@ -13,8 +13,8 @@ export interface SearchDialogData {
   styleUrls: ['./search-dialog.component.css'],
 })
 export class SearchDialogComponent {
-    
-    searchService: SearchService; 
+
+    searchService: SearchService;
     searchClause: string;
     models: any[];
 
@@ -25,7 +25,7 @@ export class SearchDialogComponent {
     }
 
     async search() {
-        
+
         this.models = await this.searchService.search(this.data.searchKey, this.searchClause) || [];
     }
 

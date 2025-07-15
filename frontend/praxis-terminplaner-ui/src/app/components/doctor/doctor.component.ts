@@ -9,7 +9,7 @@ import { DoctorService } from 'src/app/services/doctor.service';
   templateUrl: `./doctor.component.html`,
   styleUrls: ['./doctor.component.css'],
 })
-export class DoctorComponent extends ModelComponent<DoctorModel> { 
+export class DoctorComponent extends ModelComponent<DoctorModel> {
 
     doctorService: DoctorService;
 

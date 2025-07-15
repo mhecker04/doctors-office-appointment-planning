@@ -1,6 +1,5 @@
 use async_trait::async_trait;
 use entities::appointment_type;
-use futures::TryFutureExt;
 use models::appointment_type::AppointmentTypeModel;
 use sea_orm::{DatabaseConnection, EntityTrait, QueryFilter};
 

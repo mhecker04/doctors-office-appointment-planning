@@ -1,19 +1,18 @@
 use async_trait::async_trait;
 use chrono::{NaiveDateTime, Timelike, Duration, NaiveTime};
-use futures::future::err;
 use models::{
     appointment::AppointmentModel, appointment_type::AppointmentTypeModel,
-    available_appointment_resources::{self, AvailableAppointmentRessourcesModel},
+    available_appointment_resources::AvailableAppointmentRessourcesModel, doctor::DoctorModel,
 };
 use sea_orm::{
-    sea_query::Query, ColumnTrait, Condition, DatabaseConnection, DbErr, EntityTrait, QueryFilter
+    sea_query::{Query, SimpleExpr}, ColumnTrait, Condition, DatabaseConnection, EntityTrait, LoaderTrait, QueryFilter
 };
 
-use crate::{base::{map_to_vector, Repository}, error::RepositoryError, sea::SeaOrmRepository, implement_repository};
+use crate::{base::{map_to_model, map_to_vector, Repository}, error::RepositoryError, implement_repository, sea::{map_sea_orm_error, SeaOrmRepository}};
 
 pub struct AppointmentRepository;
 
-fn add_naive_time_to_naive_date_time(naive_date_time: &NaiveDateTime, naive_time: &NaiveTime) -> NaiveDateTime {
+pub fn add_naive_time_to_naive_date_time(naive_date_time: &NaiveDateTime, naive_time: &NaiveTime) -> NaiveDateTime {
 
     *naive_date_time + Duration::hours(i64::from(naive_time.hour()))
         + Duration::minutes(i64::from(naive_time.minute()))
@@ -44,6 +43,29 @@ implement_repository!(AppointmentRepository, AppointmentModel, String);
 
 impl AppointmentRepository {
 
+    pub async fn get_conflicting_appointments(&self, appointment_type_id: &String) -> Result<Vec<AppointmentModel>, RepositoryError> {
+        let connection = self.get_connection().await;
+
+        let conflicting_appointment_entities_result = entities::appointment::Entity::find()
+            .filter(
+                Condition::all()
+                    .add(self.get_doctor_has_appointment_type_predicate(appointment_type_id))
+                    .add(self.get_room_has_appointment_type_predicate(appointment_type_id)))
+            .all(&connection)
+            .await;
+
+        match conflicting_appointment_entities_result {
+            Ok(conflicting_appointment_entities) => {
+                map_to_vector(&conflicting_appointment_entities)
+            },
+            Err(err) => {
+                println!("{}", err);
+                Err(map_sea_orm_error(err))
+            }
+        }
+
+    }
+
     pub async fn get_available_ressources(
         &self,
         datetime: NaiveDateTime,
@@ -65,13 +87,12 @@ impl AppointmentRepository {
                                     .column(entities::appointment::Column::DoctorId)
                                     .from(entities::appointment::Entity)
                                     .cond_where(
-                                Condition::any()
-                                    .add(entities::appointment::Column::From.gt(to))
+                                Condition::all()
+                                    .add(entities::appointment::Column::StartDateTime.lt(to))
                                     .add(
-                                        entities::appointment::Column::To.lt(datetime)
+                                        entities::appointment::Column::EndDateTime.gt(datetime)
                                     )
                                     ).to_owned()
-
                     ),
                 ).add(
                     entities::doctor::Column::DoctorId.in_subquery(
@@ -83,7 +104,6 @@ impl AppointmentRepository {
                                 .add(entities::doctor_appointment_type::Column::AppointmentTypeId.eq(appointment_type_id.clone()))
                             ).to_owned()
                     )
-
                 ))
             .all(&connection)
             .await
@@ -98,10 +118,10 @@ impl AppointmentRepository {
                                     .column(entities::appointment::Column::RoomId)
                                     .from(entities::appointment::Entity)
                                     .cond_where(
-                                Condition::any()
-                                        .add(entities::appointment::Column::From.gt(to))
+                                Condition::all()
+                                        .add(entities::appointment::Column::StartDateTime.lt(to))
                                         .add(
-                                        entities::appointment::Column::To.lt(datetime)
+                                        entities::appointment::Column::EndDateTime.gt(datetime)
                                         )
                                     ).to_owned()
 
@@ -122,12 +142,57 @@ impl AppointmentRepository {
             .await
             .map_err(|_| RepositoryError::NoConnection)?;
 
+        let mut doctors = Vec::new();
 
+        let related_person_entities = available_doctor_entities.load_one(entities::person::Entity, &self.get_connection().await)
+            .await
+            .map_err(map_sea_orm_error)?;
+
+        for iterator in available_doctor_entities.into_iter().zip(related_person_entities) {
+            let (doctor_sea_model, person_sea_model) = iterator;
+
+            let mut doctor_model: DoctorModel = map_to_model(&doctor_sea_model)?;
+            match(person_sea_model) {
+                Some(person_sea_model) => {
+                    let person_model = map_to_model(&person_sea_model)?;
+                    doctor_model.person = Some(person_model);
+                },
+                None => {
+
+                }
+            }
+            doctors.push(doctor_model)
+        }
 
         Ok(AvailableAppointmentRessourcesModel {
-            doctors: map_to_vector(&available_doctor_entities)?,
+            doctors,
             rooms: map_to_vector(&available_room_entities)?
         })
 
     }
+
+    fn get_doctor_has_appointment_type_predicate(&self, appointment_type_id: &String) -> SimpleExpr {
+        entities::appointment::Column::DoctorId.in_subquery(
+            Query::select()
+            .column(entities::doctor_appointment_type::Column::DoctorId)                        
+            .from(entities::doctor_appointment_type::Entity)
+            .cond_where(
+                Condition::all()
+                .add(entities::doctor_appointment_type::Column::AppointmentTypeId.eq(appointment_type_id))
+            ).to_owned()
+        )
+    }
+
+    fn get_room_has_appointment_type_predicate(&self, appointment_type_id: &String) -> SimpleExpr {
+        entities::appointment::Column::RoomId.in_subquery(
+            Query::select()
+            .column(entities::room_appointment_type::Column::RoomId)                        
+            .from(entities::room_appointment_type::Entity)
+            .cond_where(
+                Condition::all()
+                .add(entities::room_appointment_type::Column::AppointmentTypeId.eq(appointment_type_id))
+            ).to_owned()
+        )
+    }
+
 }

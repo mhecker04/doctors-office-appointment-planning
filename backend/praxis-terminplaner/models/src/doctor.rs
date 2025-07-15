@@ -2,7 +2,7 @@ use serde::{Serialize, Deserialize};
 
 use crate::{person::PersonModel, Model};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct DoctorModel {
     pub doctor_id: Option<String>,
     pub person_id: Option<String>,

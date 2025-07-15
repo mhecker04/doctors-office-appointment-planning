@@ -34,6 +34,8 @@ where
 {
     let json_value = serde_json::to_string(source).map_err(|_| RepositoryError::MappingError)?;
 
+    println!("json {}", json_value.as_str());
+
     serde_json::from_str(json_value.as_str()).map_err(|_| RepositoryError::MappingError)
 }
 

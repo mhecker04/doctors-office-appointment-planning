@@ -1,8 +1,9 @@
 use async_trait::async_trait;
-use entities::appointment::Entity;
 use models::Model;
 use sea_orm::{
-    sea_query::{Func, SimpleExpr}, ActiveModelBehavior, ActiveModelTrait, ColumnTrait, Condition, ConnectionTrait, DatabaseConnection, EntityTrait, IntoActiveModel, ModelTrait, PrimaryKeyTrait, Related
+    ActiveModelBehavior, ActiveModelTrait, ColumnTrait, Condition, ConnectionTrait,
+    DatabaseConnection, DbErr, EntityTrait, IntoActiveModel, LoaderTrait, ModelTrait,
+    PrimaryKeyTrait, Related,
 };
 use serde::{de::DeserializeOwned, Serialize};
 
@@ -42,7 +43,10 @@ where
 
         match insert_result {
             Ok(_) => Ok(new_primary_key),
-            Err(_) => Err(RepositoryError::NoConnection),
+            Err(err) => {
+                println!("{}", err);
+                return Err(RepositoryError::NoConnection)
+            },
         }
     }
 
@@ -95,7 +99,7 @@ where
 
         match delete_result {
             Err(_) => Err(RepositoryError::NoRecordFound),
-            Ok(d) => Ok(id.clone()),
+            Ok(_) => Ok(id.clone()),
         }
     }
 }
@@ -113,36 +117,6 @@ where
     predicate
 }
 
-
-
-
-pub async fn add_related_entity<TModel, TSeaModel, TConnection, TRelatedEntity, TPrefetchPath>(
-    model: TModel,
-    sea_model: TSeaModel,
-    connection: TConnection,
-    prefetch_path: TPrefetchPath
-) -> Result<(), RepositoryError>
-    where TSeaModel: ModelTrait,
-    <TSeaModel as ModelTrait>::Entity: Related<TRelatedEntity>,
-    TRelatedEntity: EntityTrait,
-    TConnection: ConnectionTrait,
-    TPrefetchPath: PrefetchPath<TModel, TRelatedEntity>
-{
-
-    let related_model = sea_model.find_related(prefetch_path.get_related_entity())
-        .one(&connection)
-        .await
-        .map_err(|_| RepositoryError::NoConnection)?;
-
-    match related_model {
-        Some(related_model) => {
-            prefetch_path.set_in_model(model, related_model);
-            Ok(())
-        }
-        None => {
-            Ok(())
-        }
-    }
-
-
+pub fn map_sea_orm_error(_err: DbErr) -> RepositoryError {
+    RepositoryError::NoConnection
 }

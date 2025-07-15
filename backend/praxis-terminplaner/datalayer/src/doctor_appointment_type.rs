@@ -1,15 +1,15 @@
-use std::result;
+use std::future::IntoFuture;
 
 use async_trait::async_trait;
-use entities::{doctor_appointment_type, appointment_type, doctor};
-use models::{doctor_appointment_type::DoctorAppointmentTypeModel, appointment_type::AppointmentTypeModel};
-use sea_orm::{ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, LoaderTrait};
+use entities::doctor_appointment_type;
+use models::doctor_appointment_type::DoctorAppointmentTypeModel;
+use sea_orm::{ColumnTrait, DatabaseConnection, EntityTrait, LoaderTrait, QueryFilter};
 
 use crate::{
-    base::{ListRepository, Repository, map_to_vector, map_to_model},
+    base::{map_to_model, map_to_vector, ListRepository, Repository},
     error::RepositoryError,
     implement_repository,
-    sea::SeaOrmRepository,
+    sea::{map_sea_orm_error, SeaOrmRepository},
 };
 
 pub struct DoctorAppointmentTypeRepository;
@@ -35,41 +35,65 @@ impl
 
 #[async_trait]
 impl ListRepository<DoctorAppointmentTypeModel, String> for DoctorAppointmentTypeRepository {
+
     async fn get_by_parent_id(
         &self,
         parent_id: &String,
     ) -> Result<Vec<DoctorAppointmentTypeModel>, RepositoryError> {
-        
         let connection = self.get_connection().await;
 
-        let entities = entities::doctor_appointment_type::Entity::find()
+        let sea_models = entities::doctor_appointment_type::Entity::find()
             .filter(doctor_appointment_type::Column::DoctorId.eq(parent_id))
             .all(&connection)
             .await
             .map_err(|_| RepositoryError::NoConnection)?;
 
-        let related_appointment_types = entities.load_one(appointment_type::Entity, &connection)
+
+        let related_appointment_types = sea_models
+            .load_one(entities::appointment_type::Entity, &connection)
             .await
-            .map_err(|_| RepositoryError::NoConnection)?;
+            .map_err(map_sea_orm_error)?;
 
-        let doctor_appointment_types: Vec<DoctorAppointmentTypeModel> = map_to_vector(&entities)?;
+        let mut doctor_appointment_type_models = Vec::new();
 
-        let mut result_models: Vec<DoctorAppointmentTypeModel> = Vec::new();
+        for iterator in sea_models.into_iter().zip(related_appointment_types) {
+            let (doctor_appointment_type_sea_model, appointment_type_sea_model) = iterator;
 
-        let mut i = 0;
-
-        for mut doctor_appointment_type in doctor_appointment_types {
-            let appointment_type_model: AppointmentTypeModel = map_to_model(related_appointment_types.get(i).unwrap())?;
-
-            doctor_appointment_type.appointment_type = Some(appointment_type_model);
-
-            i += 1;
-            result_models.push(doctor_appointment_type)
-
+            match appointment_type_sea_model {
+                Some(appointment_type_sea_model) => {
+                    let mut doctor_appointment_type_model: DoctorAppointmentTypeModel =
+                        map_to_model(&doctor_appointment_type_sea_model)?;
+                    let appointment_type_model = map_to_model(&appointment_type_sea_model)?;
+                    doctor_appointment_type_model.appointment_type = Some(appointment_type_model);
+                    doctor_appointment_type_models.push(doctor_appointment_type_model);
+                }
+                None => {}
+            }   
         }
 
-        Ok(result_models)
 
+        Ok(doctor_appointment_type_models)
+    }
+}
+
+impl DoctorAppointmentTypeRepository {
+    pub async fn get_by_appointment_type_id(
+        &self,
+        appointment_type_id: &String,
+    ) -> Result<Vec<DoctorAppointmentTypeModel>, RepositoryError> {
+
+        let connection = self.get_connection().await;
+
+        let doctor_appointment_type_sea_models = entities::doctor_appointment_type::Entity::find()
+            .filter(
+                entities::doctor_appointment_type::Column::AppointmentTypeId
+                    .eq(appointment_type_id),
+            )
+            .all(&connection)
+            .await
+            .map_err(map_sea_orm_error)?;
+
+        map_to_vector(&doctor_appointment_type_sea_models)
     }
 }
 

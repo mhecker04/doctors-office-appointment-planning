@@ -8,9 +8,10 @@ use serde::{Deserialize, Serialize};
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub person_id: String,
-    pub lastname: Option<String>,
-    pub firstname: Option<String>,
+    pub lastname: String,
+    pub firstname: String,
     pub email: Option<String>,
+    pub user_id: Option<String>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
@@ -19,6 +20,14 @@ pub enum Relation {
     Doctor,
     #[sea_orm(has_many = "super::patient::Entity")]
     Patient,
+    #[sea_orm(
+        belongs_to = "super::user::Entity",
+        from = "Column::UserId",
+        to = "super::user::Column::UserId",
+        on_update = "NoAction",
+        on_delete = "NoAction"
+    )]
+    User,
 }
 
 impl Related<super::doctor::Entity> for Entity {
@@ -30,6 +39,12 @@ impl Related<super::doctor::Entity> for Entity {
 impl Related<super::patient::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::Patient.def()
+    }
+}
+
+impl Related<super::user::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::User.def()
     }
 }
 

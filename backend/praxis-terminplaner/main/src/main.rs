@@ -1,11 +1,15 @@
 #[macro_use]
 extern crate rocket;
 
+use datalayer::error::RepositoryError;
 use rocket::fairing::Fairing;
 use rocket::fairing::Info;
 use rocket::fairing::Kind;
 use rocket::http::Header;
+use rocket::http::Status;
 use rocket::launch;
+use rocket::response::status::Custom;
+use rocket::serde::json::Json;
 use rocket::Request;
 use rocket::Response;
 use routes::appointment;
@@ -18,12 +22,13 @@ mod routes;
 
 use routes::doctor;
 use routes::doctor_appointment_type;
+use routes::patient;
 use routes::room;
 use routes::room_appointment_type;
 use routes::search;
 use routes::user;
+use serde::Serialize;
 
-// Fairing to set the Access-Control-Allow-Origin header
 struct Cors;
 
 #[rocket::async_trait]
@@ -105,11 +110,55 @@ fn rocket() -> _ {
                 appointment::get_appointment,
                 appointment::update_appointment,
                 appointment::delete_appointment,
-                appointment::get_available_ressources
+                appointment::get_available_ressources,
+                appointment::get_possible_appointments
             ],
+        )
+        .mount(
+            "/patient",
+            routes![
+                patient::create_patient,
+                patient::get_patient,
+                patient::update_patient,
+                patient::delete_patient,
+                patient::get_current_user_patient
+            ]
         )
         .mount("/", routes![options])
 }
+
+
+pub fn parse_to_json_response<TResult>(result: Result<TResult, RepositoryError>) -> Custom<Result<Json<TResult>, &'static str>> 
+    where TResult: Serialize
+{
+
+    match result {
+        Ok(result) => Custom(Status::Ok, Ok(Json(result))),
+        Err(error) => Custom(get_repository_status_code(&error), Err(get_repository_error_message(&error)))
+    }
+
+}
+
+
+fn get_repository_status_code(error: &RepositoryError) -> Status {
+
+    match error {
+        RepositoryError::NoRecordFound => Status::NotFound,
+        _ => Status::InternalServerError,
+    }
+}
+
+ fn get_repository_error_message(error: &RepositoryError) -> &'static str  {
+    match error {
+        RepositoryError::NoRecordFound => "No Record found",
+        RepositoryError::InvalidDateTimeFormat => "Invalid Date Time Format",
+        RepositoryError::NoConnection => "Connection to Database could not be established",
+        RepositoryError::MappingError => "Error while Mapping Types",
+        RepositoryError::NoPersonSpecified => "No Person specified",
+        RepositoryError::DateOutOfRange => "Date out of range"
+    }
+}
+
 
 #[macro_export]
 macro_rules! crud_endpoints {
@@ -120,12 +169,10 @@ macro_rules! crud_endpoints {
                     _token: Token,
                     mut model: Json<$model_type>,
                 ) -> Custom<Result<Json<String>, &'static str>> {
+
                     let result = $business.create(&mut model).await;
 
-                    match result {
-                        Ok(v) => Custom(Status::Ok, Ok(Json(v))),
-                        Err(_) => Custom(Status::InternalServerError, Err("failed to create")),
-                    }
+                    parse_to_json_response(result)
                 }
             }
         paste! {
@@ -137,11 +184,7 @@ macro_rules! crud_endpoints {
                 ) -> Custom<Result<Json<$model_type>, &'static str>> {
                     let result = $business.get_by_id(&String::from(id)).await;
 
-                    match result {
-                        Ok(model) => Custom(Status::Ok, Ok(Json(model))),
-                        Err(RepositoryError::NoRecordFound) => Custom(Status::NotFound, Err("no record found")),
-                        Err(_) => Custom(Status::InternalServerError, Err("failed to get record"))
-                    }
+                    parse_to_json_response(result)
                 }
 
             }
@@ -154,14 +197,12 @@ macro_rules! crud_endpoints {
                 pub async fn [<update_ $model_name>](
                     _token: Token,
                     model: Json<$model_type>
-                ) -> Custom<Result<(), &'static str>> {
+                ) -> Custom<Result<Json<()>, &'static str>> {
 
                     let result = $business.update(&model).await;
 
-                    match result {
-                        Ok(()) => Custom(Status::Ok, Ok(())),
-                        Err(_) => Custom(Status::InternalServerError, Err("failed to update record"))
-                    }
+                    parse_to_json_response(result)
+
                 }
 
         }
@@ -174,10 +215,7 @@ macro_rules! crud_endpoints {
                 ) -> Custom<Result<Json<String>, &'static str>> {
                     let result = $business.delete(&String::from(id)).await;
 
-                    match result {
-                        Ok(id) => Custom(Status::Ok, Ok(Json(id))),
-                        Err(_) => Custom(Status::NotFound, Err("record could not be deleted"))
-                    }
+                    parse_to_json_response(result)
 
                 }
 

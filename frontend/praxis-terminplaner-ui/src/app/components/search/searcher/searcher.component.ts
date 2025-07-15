@@ -14,7 +14,7 @@ export class SearcherComponent {
     @Input() searchKey!: string;
     @Input() objectValue!: string;
     @Output() objectId = new EventEmitter<string>();
-    
+
     objectText: string;
 
     constructor(dialog: MatDialog) {
@@ -29,10 +29,8 @@ export class SearcherComponent {
     }
 
     onRowClick(model: any) {
-
         this.objectId.emit(model.getPrimaryKey());
         this.objectText = model[this.objectValue];
-
     }
 
 }

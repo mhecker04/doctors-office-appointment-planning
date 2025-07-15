@@ -26,11 +26,11 @@ pub async fn get_room_appointment_types(
     }
 }
 
-#[post("/<room_id>/appointmentTypes", data = "<model>")]
+#[post("/<_room_id>/appointmentTypes", data = "<model>")]
 pub async fn create_room_appointment_type(
     _token: Token,
     mut model: Json<RoomAppointmentTypeModel>,
-    room_id: &str
+    _room_id: &str
 ) -> Custom<Result<String, &'static str>> {
     let result = BUSINESS.create(&mut model).await;
 

@@ -11,6 +11,7 @@ models = { path = "../models" }
 entities = { path= "../entities" }
 business = { path = "../business" }
 datalayer = { path = "../datalayer" }
+session = { path = "../session" }
 chrono = { version = "0.4.31", features=["serde"] }
 
 rocket = { version = "0.5.0", features = ["json"] }

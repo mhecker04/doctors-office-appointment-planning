@@ -6,17 +6,16 @@ import { RoomModel } from '../models/room-model';
   providedIn: 'root'
 })
 export class RoomService extends ModelService<RoomModel> {
-  
+
   override baseUrl(): string {
     return "room";
   }
   override getInitialModel(): RoomModel {
     let model = new RoomModel("", "");
-    model.room_id = "";
     return model;
   }
 
-  constructor() { 
+  constructor() {
     super();
   }
 

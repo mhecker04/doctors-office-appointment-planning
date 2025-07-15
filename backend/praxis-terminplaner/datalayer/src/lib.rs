@@ -11,4 +11,3 @@ pub mod person;
 pub mod doctor;
 pub mod patient;
 pub mod appointment;
-pub mod prefetch;

@@ -4,7 +4,7 @@ use datalayer::{appointment_type::AppointmentTypeRepository, error::RepositoryEr
 use models::appointment_type::AppointmentTypeModel;
 use rocket::{serde::json::Json, response::status::Custom, http::Status};
 
-use crate::{request_guards::authentication::Token, crud_endpoints};
+use crate::{request_guards::authentication::Token, crud_endpoints, parse_to_json_response};
 use paste::paste;
 
 

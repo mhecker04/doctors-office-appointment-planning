@@ -3,12 +3,12 @@ use serde::{Deserialize, Serialize};
 use crate::{Model, appointment_type::AppointmentTypeModel};
 
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct RoomAppointmentTypeModel {
 
-    room_appointment_type_id: Option<String>,
-    appointment_type_id: String,
-    room_id: String ,
+    pub room_appointment_type_id: Option<String>,
+    pub appointment_type_id: String,
+    pub room_id: String,
     pub appointment_type: Option<AppointmentTypeModel>
 
 }

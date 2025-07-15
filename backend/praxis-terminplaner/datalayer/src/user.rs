@@ -1,4 +1,3 @@
-use std::f32::consts::E;
 
 use async_trait::async_trait;
 use entities::user;
@@ -6,7 +5,7 @@ use models::user::UserModel;
 use sea_orm::{ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter};
 
 use crate::{
-    base::{map_to_model, Repository, map_to_vector},
+    base::{Repository, map_to_vector},
     error::RepositoryError,
     implement_repository,
     sea::SeaOrmRepository,
@@ -21,12 +20,14 @@ impl UserRepository {
             .one(&self.get_connection().await)
             .await;
 
+
         match result {
             Ok(option) => match option {
                 Some(model) => crate::base::map_to_model(&model),
                 None => Err(RepositoryError::NoRecordFound),
             },
-            Err(_) => Err(RepositoryError::NoConnection),
+            Err(_) => Err(RepositoryError::NoConnection)
+            ,
         }
     }
 

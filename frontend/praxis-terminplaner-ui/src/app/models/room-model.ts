@@ -2,11 +2,11 @@ import { BaseModel } from "./base-model";
 
 
 export class RoomModel extends BaseModel<string | undefined> {
-    
+
     room_id?: string;
     room_name: string;
     room_number: string;
-    
+
     constructor(roomName: string, roomNumber: string) {
         super();
         this.room_name = roomName;

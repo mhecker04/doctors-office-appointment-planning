@@ -14,18 +14,20 @@ import { MatOptionModule } from '@angular/material/core';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import {
-
     MatDialogModule,
 } from '@angular/material/dialog';
 
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatMenuModule } from '@angular/material/menu';
+import {MatStepperModule} from '@angular/material/stepper';
 
 @NgModule({
     declarations: [
     ],
     imports: [
+        FormsModule
     ],
     exports: [
         CommonModule,
@@ -48,7 +50,10 @@ import { MatNativeDateModule } from '@angular/material/core';
         MatButtonModule,
         MatDialogModule,
         MatDatepickerModule,
-        MatNativeDateModule
+        MatNativeDateModule,
+        ReactiveFormsModule,
+        MatMenuModule,
+        MatStepperModule
     ]
 })
 export class MaterialModule { }

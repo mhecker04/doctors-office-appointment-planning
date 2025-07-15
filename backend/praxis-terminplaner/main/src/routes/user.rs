@@ -6,13 +6,13 @@ use business::base::Business;
 use business::user::UserBusiness;
 use datalayer::{user::UserRepository, error::RepositoryError};
 
-use crate::{request_guards::authentication::Token, crud_endpoints};
+use crate::{request_guards::authentication::Token, crud_endpoints, parse_to_json_response};
 
 use paste::paste;
 
 
-const business: UserBusiness = UserBusiness {
+const BUSINESS: UserBusiness = UserBusiness {
     repository: UserRepository{}
 };
 
-crud_endpoints!(business, UserModel, user);
+crud_endpoints!(BUSINESS, UserModel, user);

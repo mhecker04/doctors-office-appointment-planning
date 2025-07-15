@@ -11,6 +11,7 @@ pub mod room;
 pub mod room_appointment_type;
 pub mod search;
 pub mod user;
+pub mod patient;
 
 pub fn parse_result<TModel>(
     result: Result<TModel, RepositoryError>,
@@ -40,6 +41,10 @@ where
         Err(RepositoryError::NoRecordFound) => Custom(
             Status::NotFound,
             Err("no record was found")
+        ),
+        Err(RepositoryError::DateOutOfRange) => Custom(
+            Status::NotFound,
+            Err("Date out of range")
         )
     }
 

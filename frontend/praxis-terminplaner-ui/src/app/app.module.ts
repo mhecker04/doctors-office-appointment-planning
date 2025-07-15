@@ -19,16 +19,23 @@ import { DoctorComponent } from "./components/doctor/doctor.component";
 import { DoctorAppointmentTypeTabComponent } from "./components/doctor/tabs/doctor-appointment-type-tab/doctor-appointment-type-tab.component";
 import { SearcherComponent } from "./components/search/searcher/searcher.component";
 import { AppointmentPlanningComponent } from "./components/appointment-planning/appointment-planning.component";
+import { PatientComponent } from './components/patient/patient.component';
+import { AppointmentSelectionComponent } from './components/dialogs/appointment-selection/appointment-selection.component';
+import { CalendarComponent } from './components/calendar/calendar.component';
+import { TimesPipe } from "./pipes/times.pipe";
+import { SelectAppointmentResourcesDialogComponent } from './components/dialogs/select-appointment-resources-dialog/select-appointment-resources-dialog.component';
 
 let routes: Route[] = [
     { path: "login", component: LoginComponent },
     { path: "user", component: UserComponent },
     { path: "appointmentType", component: AppointmentTypeComponent },
     { path: "room/:id", component: RoomComponent },
-    { path: "search", component: SearchComponent }, 
+    { path: "room", component: RoomComponent },
+    { path: "search", component: SearchComponent },
     { path: "doctor/:id", component: DoctorComponent},
     { path: "doctor", component: DoctorComponent},
-    { path: "appointment", component: AppointmentPlanningComponent }
+    { path: "appointment", component: AppointmentPlanningComponent },
+    { path: "patient/:id", component: PatientComponent }
 ]
 
 @NgModule({
@@ -46,7 +53,12 @@ let routes: Route[] = [
         DoctorComponent,
         DoctorAppointmentTypeTabComponent,
         SearcherComponent,
-        AppointmentPlanningComponent
+        AppointmentPlanningComponent,
+        PatientComponent,
+        AppointmentSelectionComponent,
+        CalendarComponent,
+        TimesPipe,
+        SelectAppointmentResourcesDialogComponent,
     ],
     imports: [
         BrowserModule,

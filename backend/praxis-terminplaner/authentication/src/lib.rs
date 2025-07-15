@@ -14,8 +14,9 @@ pub async fn authorize(username: &String, password: &String) -> Result<String, E
 
     let user_repository = datalayer::user::UserRepository {};
 
-    let user= user_repository.get_by_username(username)
-        .await.map_err(|_| Error::WrongCredentialsError)?;
+    let user = user_repository.get_by_username(username)
+        .await
+        .map_err(|_| Error::WrongCredentialsError)?;
 
     let result = bcrypt::verify(password, user.password.as_str());
 
@@ -28,15 +29,15 @@ pub async fn authorize(username: &String, password: &String) -> Result<String, E
 
 #[derive(Deserialize, Serialize)]
 pub struct Claims {
-    user_id: String,
-    username: String,
+    pub user_id: String,
+    pub username: String,
     exp: usize
 }
 
 fn create_token(user_id: String, username: String) -> Result<String, Error> {
 
     let expiration = Utc::now()
-        // todo change later just for testing porpuses set so high
+        // todo change later just for testing purposes set so high
         .checked_add_signed(chrono::Duration::seconds(30000))
         .expect("valid timestamp")
         .timestamp();

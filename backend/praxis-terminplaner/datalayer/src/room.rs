@@ -1,10 +1,10 @@
 use async_trait::async_trait;
-use entities::room;
+use entities::{room, room_appointment_type};
 use models::room::RoomModel;
-use sea_orm::{DatabaseConnection, ColumnTrait, EntityTrait, QueryFilter};
+use sea_orm::{ColumnTrait, DatabaseConnection, EntityTrait, LoaderTrait, QueryFilter};
 
 use crate::base::map_to_vector;
-use crate::sea::get_search_predicate;
+use crate::sea::{get_search_predicate, map_sea_orm_error};
 use crate::search::SearchRepository;
 use crate::{base::Repository, implement_repository, sea::SeaOrmRepository};
 
@@ -39,6 +39,28 @@ impl SearchRepository<RoomModel, String> for RoomRepository {
     }
 
 
+}
+
+impl RoomRepository {
+
+    pub async fn load_rooms_qualified_for_appointment_type(&self, appointment_type_id: &String) -> Result<Vec<RoomModel>, RepositoryError> {
+
+        let connection = self.get_connection().await;
+
+        let room_appointment_type_sea_models = entities::room_appointment_type::Entity::find()
+            .filter(entities::room_appointment_type::Column::AppointmentTypeId.eq(appointment_type_id))
+            .all(&connection)
+            .await
+            .map_err(map_sea_orm_error)?;
+
+        let rooms = room_appointment_type_sea_models.load_one(entities::room::Entity, &connection)
+
+            .await
+            .map_err(map_sea_orm_error)?;
+
+        map_to_vector(&rooms)
+
+    }
 }
 
 implement_repository!(RoomRepository, RoomModel, String);

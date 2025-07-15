@@ -5,5 +5,6 @@ pub enum RepositoryError {
     NoRecordFound,
     MappingError,
     NoPersonSpecified,
-    InvalidDateTimeFormat
+    InvalidDateTimeFormat,
+    DateOutOfRange
 }

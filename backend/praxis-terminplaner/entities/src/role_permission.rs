@@ -8,8 +8,8 @@ use serde::{Deserialize, Serialize};
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub role_permission_id: String,
-    pub role_id: String,
-    pub permission_id: String,
+    pub role_id: Option<String>,
+    pub permission_id: Option<String>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

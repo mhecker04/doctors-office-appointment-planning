@@ -1,9 +1,11 @@
 use crate::response_models::{NetworkResponse, Response, ResponseBody};
 use authentication::{validate_token, Claims};
 use rocket::http::Status;
-use rocket::request::{FromRequest, Outcome, Request};
+use rocket::request::{self, FromRequest, Outcome, Request};
+use session::{Session, SESSION_STORAGE};
 
 pub struct Token {
+    #[allow(dead_code)]
     claims: Claims,
 }
 
@@ -28,10 +30,14 @@ impl<'r> FromRequest<'r> for Token {
         match req.headers().get_one("Authorization") {
             None => error,
             Some(key) => match validate_token(key) {
-                Ok(claims) => Outcome::Success(Token { claims: claims }),
-                Err(err) => {
-                    error
+                Ok(claims) => {
+                    SESSION_STORAGE.lock().await.register(Session {
+                        user_id: claims.user_id.clone(),
+                        username: claims.username.clone(),
+                    });
+                    Outcome::Success(Token { claims })
                 }
+                Err(_) => error,
             },
         }
     }

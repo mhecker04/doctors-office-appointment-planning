@@ -3,7 +3,7 @@ use serde::{Serialize, Deserialize};
 use crate::Model;
 
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Clone)]
 pub struct RoomModel {
 
     pub room_id: Option<String>,

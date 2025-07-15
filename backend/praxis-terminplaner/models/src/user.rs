@@ -4,7 +4,7 @@ use crate::Model;
 
 
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct UserModel {
     pub user_id: Option<String>,
     pub username: String,

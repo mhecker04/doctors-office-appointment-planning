@@ -7,6 +7,8 @@ use crate::request_guards::authentication::Token;
 
 
 
+
+
 const BUSINESS: DoctorAppointmentTypeBusiness = DoctorAppointmentTypeBusiness{
     repository: DoctorAppointmentTypeRepository,
 };
@@ -27,11 +29,11 @@ pub async fn get_doctor_appointment_types(
     }
 }
 
-#[post("/<doctor_id>/appointmentTypes", data = "<model>")]
+#[post("/<_doctor_id>/appointmentTypes", data = "<model>")]
 pub async fn create_doctor_appointment_type(
     _token: Token,
     mut model: Json<DoctorAppointmentTypeModel>,
-    doctor_id: &str
+    _doctor_id: &str
 ) -> Custom<Result<String, &'static str>> {
     let result = BUSINESS.create(&mut model).await;
 

@@ -13,7 +13,6 @@ export class AppointmentTypeService extends ModelService<AppointmentTypeModel> {
 
     override getInitialModel(): AppointmentTypeModel {
         let model = new AppointmentTypeModel("", "0:00");
-        model.appointment_type_id = "";
         return model;
     }
 

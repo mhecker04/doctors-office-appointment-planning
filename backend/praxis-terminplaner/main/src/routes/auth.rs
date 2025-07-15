@@ -1,10 +1,7 @@
 
-use authentication::authorize;
+use authentication::{authorize, hash};
 use rocket::{serde::json::Json, response::status::Custom, http::Status};
 use serde::{Deserialize, Serialize};
-
-use crate::request_guards::authentication::Token;
-
 
 
 #[derive(Deserialize)]
@@ -23,7 +20,6 @@ pub struct AccessToken {
 #[post("/login", data = "<login_parameters>")]
 pub async fn login(login_parameters: Json<LoginParameters>) -> Custom<Result<Json<AccessToken>, &'static str>> {
     let token_result = authorize(&login_parameters.username, &login_parameters.password).await;
-
     match token_result {
         Ok(token) => {
             let access_token = AccessToken {

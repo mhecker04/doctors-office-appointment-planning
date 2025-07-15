@@ -24,14 +24,10 @@ export class SearchService {
 
     async search(searchKey: string, searchClause: string): Promise<any[] | null> {
         let models: BaseModel<string>[] | null = await ApiService.get("search/" + searchKey, null, { search_clause: searchClause });
-
-
         if (models == null) {
             return models;
         }
-
         return this.mapToModels(searchKey, models!);
-
     }
 
     getAvailableSearches(): SearchDefinitionModel[] {

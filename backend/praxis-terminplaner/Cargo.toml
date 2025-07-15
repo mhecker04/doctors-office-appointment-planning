@@ -8,6 +8,7 @@ members = [
 	"tools",
 	"authentication",
 	"entities",
-	"business"
+	"business",
+  "session"
 ]
 
